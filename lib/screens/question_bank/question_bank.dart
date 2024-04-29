@@ -430,7 +430,7 @@ fetchquestionlist()async{
                       answerCntrl.text.toString(), 
                       options, 
                       topicCntrl.text.toString(), 
-                      level.toString()
+                      level.toLowerCase().toString()
                       );
                   },
                   child: Text('Upload'),
@@ -512,13 +512,6 @@ fetchquestionlist()async{
                 ),
               ),
               Divider(),
-              // Padding(
-              //   padding: const EdgeInsets.only(left:20.0),
-              //   child: Align(
-              //    alignment: AlignmentDirectional.centerStart, 
-              //     child: Text('Question Bank',style: TextStyle(fontSize: 25,fontWeight: FontWeight.w900),)),
-              // ),
-              // ElevatedButton(onPressed: _showDialog, child: Text("Create")),
               Padding(
                 padding: const EdgeInsets.only(left:20.0,right: 20.0),
                 child: Row(
@@ -529,7 +522,8 @@ fetchquestionlist()async{
                    
                   ],
                 ),
-              )
+              ),
+
               ],
             ),
           ),

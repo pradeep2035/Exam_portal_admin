@@ -37,24 +37,80 @@ class QuestionBankController extends GetxController{
     return null; // Returning null in case of any other unexpected condition
   }
 
-  fetchQuestiona()async{
-  try {
+  Future<List<Map<String, dynamic>>> fetchData() async {
+    try {
       final response = await dio.get(apiValue.questionListUrl);
       if (response.statusCode == 200) {
-        final responseData = response.data;
-        if (responseData != null && responseData["status_code"] == 200) {
-          List data = responseData['data'];
-          print("=================================");
-          print(data);
-          return data;
-        }
+        final List<dynamic> data = response.data['data'];
+        final List<Map<String, dynamic>> typedData = data.cast<Map<String, dynamic>>();
+        return typedData;
+      } else {
+        throw Exception('Failed to load data');
       }
     } catch (e) {
-      print("Error fetching while fyeching questions: $e");
-      return null; // Returning null to indicate an error
+      throw Exception('Failed to fetch data: $e');
     }
-    return null; // Returning null in case of any other unexpected condition
   }
+
+//======================================================search api
+Future<List<Map<String, dynamic>>> searchQuestion(String query) async {
+  try {
+    Map<String, dynamic> data = {'query': query};
+    print(query);
+    final response = await dio.get(apiValue.searchQuestionUrl, queryParameters: data);
+    if (response.statusCode == 200) {
+      List<dynamic> questionList = response.data['data'];
+      //print(questionList);
+      // Convert each item to Map<String, dynamic>
+      List<Map<String, dynamic>> mappedQuestionList = questionList.map((item) => item as Map<String, dynamic>).toList();
+      print(mappedQuestionList);
+      return mappedQuestionList;
+    } else if (response.statusCode == 404) {
+      print("FAILED SEARCH API");
+      return [];
+    }
+  } catch (e) {
+    print('Error searching: $e');
+    throw Exception('Failed to search: $e');
+  }
+  return [];
+}
+
+Future<Map<String, dynamic>?>fetchQuestionById(String id) async {
+  try {
+     Map<String, dynamic> data = {'id': id};
+      final response = await dio.get(apiValue.detailQuestionUrl,queryParameters: data);
+      if (response.statusCode == 200) {
+        final  data = response.data['data'];
+        return data;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch data: $e');
+    }
+}
+
+//=================================================================DELETE API FOR QUESTION
+ deleteData(String id) async {
+
+  try {
+    Map<String, dynamic> data = {'id': id};
+    final response = await Dio().delete(apiValue.deleteUserDataUrl,queryParameters: data);
+    
+    // Check the response status code
+    if (response.statusCode == 200) {
+      // Successful DELETE request
+      print('Data deleted successfully.');
+    } else {
+      // Handle other status codes if needed
+      print('Failed to delete data. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Handle error
+    print('Error deleting data: $e');
+  }
+}
 
   
 }
